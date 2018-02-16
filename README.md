@@ -1,2 +1,5 @@
 # scala-screenshot-tool
-A desktop screenshotting tool written in Scala
+A desktop screenshot tool written in Scala. 
+
+**Todo**: 
+ * Stuff
