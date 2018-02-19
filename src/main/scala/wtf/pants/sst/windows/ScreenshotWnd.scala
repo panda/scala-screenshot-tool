@@ -38,19 +38,20 @@ class ScreenshotWnd(imageUploader: ImageUploader) extends Stage {
   val screenshot: BufferedImage = new Robot().createScreenCapture(bounds)
   val image: WritableImage = SwingFXUtils.toFXImage(screenshot, null)
 
-  //When the screenshot window appears, update the canvas
+  //When the screenshot window appears, update the canvas and force window to front
   onShown = _ => {
     updateCanvas(canvas.graphicsContext2D, image)
+    toFront()
   }
-
 
   scene = new Scene {
     fill = Orange
     getChildren.add(canvas)
     initListeners(this)
+    alwaysOnTop = true
   }
 
-  def initListeners(scene: Scene): Unit ={
+  def initListeners(scene: Scene): Unit = {
     scene.onMousePressed = (event) => {
       mouseStartX = event.getX
       mouseStartY = event.getY
