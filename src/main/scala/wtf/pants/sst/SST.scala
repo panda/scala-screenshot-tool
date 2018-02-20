@@ -48,6 +48,11 @@ object SST extends JFXApp {
     height = 480
 
     scene = createScene()
+
+
+    onShown = _ => {
+      toFront()
+    }
   }
 
   /**

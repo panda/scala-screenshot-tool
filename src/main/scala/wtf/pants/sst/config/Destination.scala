@@ -5,7 +5,7 @@ import wtf.pants.sst.config.enum.RequestType
 import wtf.pants.sst.config.enum.RequestType.RequestType
 
 
-@JsonCodec class Destination(val url: String,
+class Destination(val url: String,
                                   val fileField: String,
                                   var arguments: Array[(String, String)] = new Array[(String, String)](0),
                                   val requestType: RequestType = RequestType.POST) {
