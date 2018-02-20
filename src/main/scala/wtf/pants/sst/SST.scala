@@ -1,22 +1,41 @@
 package wtf.pants.sst
 
-import java.awt._
+import java.awt.{MenuItem, PopupMenu}
 import javax.swing.KeyStroke
 
 import com.tulskiy.keymaster.common.Provider
+import wtf.pants.sst.config.{Config, Destination}
 import wtf.pants.sst.tools.ImageUploader
 import wtf.pants.sst.windows.ScreenshotWnd
 
 import scalafx.application.JFXApp
 import scalafx.application.Platform
 import scalafx.scene.Scene
-import scalafx.scene.control.Label
+import scalafx.scene.control.{Button, Label, TextField}
+import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color._
 
 object SST extends JFXApp {
 
   private val popupMenu = new PopupMenu("SST")
-  val uploader = new ImageUploader
+
+  val config = new Config
+
+  val urlTxt = createTextField("https://my.website/upload")
+  val fileTxt = createTextField("file")
+  val argumentsTxt = createTextField("arg=something&key=SlvW$5las")
+
+  val saveBtn = new Button("Save") {
+    onMouseClicked_=(_ => config.saveConfig())
+  }
+
+  val destination = new Destination(
+    "https://my.website/upload",
+    "file",
+    Array(("key", "mykey123"))
+  )
+
+  val uploader = new ImageUploader(destination)
 
   Platform.implicitExit = false
 
@@ -39,7 +58,9 @@ object SST extends JFXApp {
   private def createScene(): Scene = {
     new Scene {
       fill = White
-      getChildren.add(new Label("TODO"))
+      val vbox = new VBox()
+      vbox.children.addAll(urlTxt, fileTxt, argumentsTxt, saveBtn)
+      getChildren.add(vbox)
     }
   }
 
@@ -54,6 +75,8 @@ object SST extends JFXApp {
   }
 
   private def setupSystemTray(): Unit = {
+    import java.awt._ //Keep this imported here
+
     val tray: SystemTray = SystemTray.getSystemTray
     val image: Image = Toolkit.getDefaultToolkit.getImage("tray_icon.png")
 
@@ -74,5 +97,12 @@ object SST extends JFXApp {
       addActionListener((_) => Platform.runLater(() => event.apply()))
     }
     popupMenu.add(menuItem)
+  }
+
+  private def createTextField(prompt: String, p_Width: Int = 300): TextField = {
+    new TextField() {
+      promptText = prompt
+      prefWidth = p_Width
+    }
   }
 }

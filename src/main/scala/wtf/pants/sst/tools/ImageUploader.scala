@@ -8,19 +8,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import javax.imageio.ImageIO
 
-import org.apache.http.{HttpEntity, HttpResponse}
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import wtf.pants.sst.config.{Config, Destination}
 
-class ImageUploader {
-  //todo: Make this not hardcoded
-  private val DEFAULT_URL = "https://your.website/upload"
-  private val KEY = "blahblahblah"
-
+class ImageUploader(destination: Destination) {
   private val USER_AGENT = "scala-screenshot-tool"
 
   def saveImage(img: BufferedImage, fileName: String, format: String = "PNG", path: String = ""): Unit = {
@@ -29,16 +25,16 @@ class ImageUploader {
 
   def uploadImage(img: BufferedImage, format: String = "PNG", clipboard: Boolean = false): (Boolean, String) = {
     val http = HttpClients.createDefault
-    val post = new HttpPost(DEFAULT_URL)
+    val post = new HttpPost(destination.url)
 
     val imageBytes = getImageBytes(img, format)
 
-    val entity = MultipartEntityBuilder.create()
-      .addBinaryBody("file", imageBytes, ContentType.IMAGE_PNG, "file.png")
-      .addTextBody("key", KEY)
-      .build()
+    val entityBuilder = MultipartEntityBuilder.create()
+      .addBinaryBody(destination.fileField, imageBytes, ContentType.IMAGE_PNG, "file.png")
 
-    post.setEntity(entity)
+    destination.arguments.foreach(tuple => entityBuilder.addTextBody(tuple._1, tuple._2))
+
+    post.setEntity(entityBuilder.build())
     post.addHeader("user-agent", USER_AGENT)
 
     val responseBody = attemptRequest(http, post)
