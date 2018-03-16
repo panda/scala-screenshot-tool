@@ -14,9 +14,9 @@ import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import wtf.pants.sst.config.{Config, Destination}
+import wtf.pants.sst.config.{Config, Destination, JsonConfig}
 
-class ImageUploader(destination: Destination) {
+class ImageUploader(destination: JsonConfig) {
   private val USER_AGENT = "scala-screenshot-tool"
 
   def saveImage(img: BufferedImage, fileName: String, format: String = "PNG", path: String = ""): Unit = {
@@ -30,9 +30,8 @@ class ImageUploader(destination: Destination) {
     val imageBytes = getImageBytes(img, format)
 
     val entityBuilder = MultipartEntityBuilder.create()
-      .addBinaryBody(destination.fileField, imageBytes, ContentType.IMAGE_PNG, "file.png")
-
-    destination.arguments.foreach(tuple => entityBuilder.addTextBody(tuple._1, tuple._2))
+      .addBinaryBody(destination.fileKey, imageBytes, ContentType.IMAGE_PNG, "file.png")
+      .addTextBody(destination.authKey, destination.key)
 
     post.setEntity(entityBuilder.build())
     post.addHeader("user-agent", USER_AGENT)

@@ -4,7 +4,7 @@ import java.awt.{MenuItem, PopupMenu}
 import javax.swing.KeyStroke
 
 import com.tulskiy.keymaster.common.Provider
-import wtf.pants.sst.config.{Config, Destination}
+import wtf.pants.sst.config.{Config, Destination, JsonConfig}
 import wtf.pants.sst.tools.ImageUploader
 import wtf.pants.sst.windows.ScreenshotWnd
 
@@ -19,23 +19,17 @@ object SST extends JFXApp {
 
   private val popupMenu = new PopupMenu("SST")
 
-  val config = new Config
-
   val urlTxt = createTextField("https://my.website/upload")
   val fileTxt = createTextField("file")
   val argumentsTxt = createTextField("arg=something&key=SlvW$5las")
 
   val saveBtn = new Button("Save") {
-    onMouseClicked_=(_ => config.saveConfig())
+    onMouseClicked_=(_ => println("i do nothing"))
   }
 
-  val destination = new Destination(
-    "https://my.website/upload",
-    "file",
-    Array(("key", "mykey123"))
-  )
-
-  val uploader = new ImageUploader(destination)
+  val config = new Config().shekels
+  println(config.mkString)
+  val uploader = new ImageUploader(config.getOrElse(JsonConfig("", "", "", "")))
 
   Platform.implicitExit = false
 
