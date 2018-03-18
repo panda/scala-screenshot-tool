@@ -31,7 +31,8 @@ class ImageUploader(destination: JsonConfig) {
 
     val entityBuilder = MultipartEntityBuilder.create()
       .addBinaryBody(destination.fileKey, imageBytes, ContentType.IMAGE_PNG, "file.png")
-      .addTextBody(destination.authKey, destination.key)
+
+    destination.arguments.foreach(t => entityBuilder.addTextBody(t._1, t._2))
 
     post.setEntity(entityBuilder.build())
     post.addHeader("user-agent", USER_AGENT)
