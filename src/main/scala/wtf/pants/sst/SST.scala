@@ -29,7 +29,7 @@ object SST extends JFXApp {
 
   val config = new Config().shekels
   println(config.mkString)
-  val uploader = new ImageUploader(config.getOrElse(JsonConfig("", "", "", "")))
+  val uploader = new ImageUploader(config.getOrElse(JsonConfig("", "", Map[String, String]())))
 
   Platform.implicitExit = false
 
