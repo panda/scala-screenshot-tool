@@ -76,6 +76,10 @@ class ScreenshotWnd(imageUploader: ImageUploader) extends Stage {
 
       val url = imageUploader.uploadImage(region, clipboard = true)
       println(s"${if (url._1) "Success" else "Error"}: ${url._2}")
+
+      if (url._1) {
+        new ImageNotificationWnd(savedImage = Option(region)).show()
+      }
     }
 
     scene.onKeyPressed = event => {
